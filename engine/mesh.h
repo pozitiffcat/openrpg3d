@@ -19,8 +19,8 @@ private:
     void render(const render_context &context);
 
 private:
-    GLuint m_buffer;
-    size_t m_vertices_count;
+    GLuint m_buffer = 0;
+    size_t m_vertices_count = 0;
 };
 
 }

@@ -9,19 +9,33 @@
 namespace {
 
 const char *vertex_shader =
-        "#version 330 core\n" \
-        "in vec3 position;\n" \
-        "void main(void)\n" \
-        "{\n" \
-        "	gl_Position   = vec4 ( position, 1.0 );\n" \
+        "#version 330 core\n"
+        "in vec3 position;\n"
+        "in vec3 normal;\n"
+        "uniform mat4 proj_matrix;\n"
+        "uniform mat4 view_matrix;\n"
+        "uniform mat4 model_matrix;\n"
+        "out vec3 p;\n"
+        "out vec3 n;\n"
+        "void main(void)\n"
+        "{\n"
+        "   p = (model_matrix * vec4(position, 1.0)).xyz;\n"
+        "   n = normal;\n"
+        "	gl_Position = proj_matrix * view_matrix * model_matrix * vec4(position, 1.0);\n"
         "}\n";
 
 const char *fragment_shader =
-        "#version 330 core\n" \
-        "out vec4 color;\n"   \
-        "void main(void)\n"   \
-        "{\n"                 \
-        "	color = vec4 ( 1.0);\n" \
+        "#version 330 core\n"
+        "in vec3 p;\n"
+        "in vec3 n;\n"
+        "out vec4 color;\n"
+        "uniform mat3 normal_matrix;\n"
+        "void main(void)\n"
+        "{\n"
+        "   vec3 light_pos = vec3(0.0, 7.0, -10.0);\n"
+        "   vec3 light_dir = normalize(light_pos - p);\n"
+        "   float shade = dot(normal_matrix * n, light_dir);\n"
+        "	color = max(shade, 0.2) * vec4(1.0);\n"
         "}\n";
 
 GLuint create_compiled_shader(const char *source, GLenum type)
@@ -98,14 +112,22 @@ void renderer::render_frame()
 {
     glEnable(GL_DEPTH_TEST);
 
-    if (m_camera != nullptr)
-        m_camera->clear_screen();
-
     glUseProgram(m_program);
 
     render_context context;
-    context.position_attrib = glGetAttribLocation (m_program, "position");
+    context.position_attrib = glGetAttribLocation(m_program, "position");
+    context.normal_attrib = glGetAttribLocation(m_program, "normal");
+    context.proj_matrix_uniform = glGetUniformLocation(m_program, "proj_matrix");
+    context.view_matrix_uniform = glGetUniformLocation(m_program, "view_matrix");
+    context.model_matrix_uniform = glGetUniformLocation(m_program, "model_matrix");
+    context.normal_matrix_uniform = glGetUniformLocation(m_program, "normal_matrix");
+
     glEnableVertexAttribArray(context.position_attrib);
+    glEnableVertexAttribArray(context.normal_attrib);
+
+    if (m_camera != nullptr) {
+        m_camera->render(context);
+    }
 
     for (auto drawable : m_drawable_list) {
         drawable->render(context);

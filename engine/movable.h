@@ -16,12 +16,11 @@ public:
     void set_rotation(float x, float y, float z);
     void set_scale(float x, float y, float z);
 
-private:
-    void update_matrix();
+protected:
+    glm::mat4 get_global_matrix() const;
 
 private:
     std::shared_ptr<movable> m_parent;
-    glm::mat4 m_matrix;
     glm::vec3 m_position = glm::vec3(0, 0, 0);
     glm::vec3 m_rotation = glm::vec3(0, 0, 0);
     glm::vec3 m_scale = glm::vec3(1, 1, 1);

@@ -27,7 +27,7 @@ public:
 private:
     std::shared_ptr<camera> m_camera;
     std::list<std::shared_ptr<drawable>> m_drawable_list;
-    GLuint m_program;
+    GLuint m_program = 0;
 };
 
 }
