@@ -5,9 +5,12 @@
 
 namespace engine {
 
+class renderer;
+
 class camera : public movable
 {
-public:
+    friend class renderer;
+private:
     void clear_screen();
 };
 
