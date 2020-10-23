@@ -15,7 +15,9 @@ std::shared_ptr<camera> renderer::create_camera()
 
 std::shared_ptr<mesh> renderer::create_mesh(const mesh_def &def)
 {
-    return std::make_shared<mesh>();
+    GLuint buffer = 0;
+    glGenBuffers(1, &buffer);
+    return std::make_shared<mesh>(buffer);
 }
 
 std::shared_ptr<drawable> renderer::create_drawable()
