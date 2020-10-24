@@ -19,8 +19,14 @@ void camera::render(const render_context &context)
 
     m_view_matrix = glm::lookAt(glm::vec3(global_matrix[3]), glm::vec3(global_matrix[3] + global_matrix[2]), glm::vec3(0, 1, 0));
 
-    glUniformMatrix4fv(context.proj_matrix_uniform, 1, false, glm::value_ptr(m_projection_matrix));
-    glUniformMatrix4fv(context.view_matrix_uniform, 1, false, glm::value_ptr(m_view_matrix));
+    if (context.proj_matrix_uniform != -1)
+        glUniformMatrix4fv(context.proj_matrix_uniform, 1, false, glm::value_ptr(m_projection_matrix));
+
+    if (context.view_matrix_uniform != - 1)
+        glUniformMatrix4fv(context.view_matrix_uniform, 1, false, glm::value_ptr(m_view_matrix));
+
+    if (context.proj_view_matrix_uniform != - 1)
+        glUniformMatrix4fv(context.proj_view_matrix_uniform, 1, false, glm::value_ptr(m_projection_matrix * m_view_matrix));
 }
 
 }

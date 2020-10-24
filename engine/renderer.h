@@ -2,9 +2,10 @@
 #define RENDERER_H
 
 #include <GL/glew.h>
-#include <list>
+#include <vector>
 #include <memory>
 
+#include "render_context.h"
 #include "mesh_def.h"
 
 namespace engine {
@@ -26,8 +27,9 @@ public:
 
 private:
     std::shared_ptr<camera> m_camera;
-    std::list<std::shared_ptr<drawable>> m_drawable_list;
+    std::vector<std::shared_ptr<drawable>> m_drawable_list;
     GLuint m_program = 0;
+    render_context m_program_context;
 };
 
 }

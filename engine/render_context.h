@@ -10,6 +10,7 @@ struct render_context {
     GLint normal_attrib;
     GLint proj_matrix_uniform;
     GLint view_matrix_uniform;
+    GLint proj_view_matrix_uniform;
     GLint model_matrix_uniform;
     GLint normal_matrix_uniform;
 };

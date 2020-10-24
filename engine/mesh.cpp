@@ -21,8 +21,13 @@ mesh::~mesh()
 void mesh::render(const render_context &context)
 {
     glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-    glVertexAttribPointer(context.position_attrib, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (const GLvoid*) 0);
-    glVertexAttribPointer(context.normal_attrib, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (const GLvoid*) 12);
+
+    if (context.position_attrib != -1)
+        glVertexAttribPointer(context.position_attrib, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (const GLvoid*) 0);
+
+    if (context.normal_attrib != -1)
+        glVertexAttribPointer(context.normal_attrib, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (const GLvoid*) 12);
+
     glDrawArrays(GL_TRIANGLES, 0, m_vertices_count);
 }
 

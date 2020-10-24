@@ -8,6 +8,24 @@
 
 namespace {
 
+const char *debug_vertex_shader =
+        "#version 330 core\n"
+        "in vec3 position;\n"
+        "uniform mat4 proj_view_matrix;\n"
+        "uniform mat4 model_matrix;\n"
+        "void main(void)\n"
+        "{\n"
+        "	gl_Position = proj_view_matrix * model_matrix * vec4(position, 1.0);\n"
+        "}\n";
+
+const char *debug_fragment_shader =
+        "#version 330 core\n"
+        "out vec4 color;\n"
+        "void main(void)\n"
+        "{\n"
+        "	color = vec4(1.0);\n"
+        "}\n";
+
 const char *vertex_shader =
         "#version 330 core\n"
         "in vec3 position;\n"
@@ -81,6 +99,14 @@ namespace engine {
 renderer::renderer()
 {
     m_program = create_compiled_program(vertex_shader, fragment_shader);
+//    m_program = create_compiled_program(debug_vertex_shader, debug_fragment_shader);
+    m_program_context.position_attrib = glGetAttribLocation(m_program, "position");
+    m_program_context.normal_attrib = glGetAttribLocation(m_program, "normal");
+    m_program_context.proj_matrix_uniform = glGetUniformLocation(m_program, "proj_matrix");
+    m_program_context.view_matrix_uniform = glGetUniformLocation(m_program, "view_matrix");
+    m_program_context.proj_view_matrix_uniform = glGetUniformLocation(m_program, "proj_view_matrix");
+    m_program_context.model_matrix_uniform = glGetUniformLocation(m_program, "model_matrix");
+    m_program_context.normal_matrix_uniform = glGetUniformLocation(m_program, "normal_matrix");
 }
 
 std::shared_ptr<camera> renderer::create_camera()
@@ -114,23 +140,15 @@ void renderer::render_frame()
 
     glUseProgram(m_program);
 
-    render_context context;
-    context.position_attrib = glGetAttribLocation(m_program, "position");
-    context.normal_attrib = glGetAttribLocation(m_program, "normal");
-    context.proj_matrix_uniform = glGetUniformLocation(m_program, "proj_matrix");
-    context.view_matrix_uniform = glGetUniformLocation(m_program, "view_matrix");
-    context.model_matrix_uniform = glGetUniformLocation(m_program, "model_matrix");
-    context.normal_matrix_uniform = glGetUniformLocation(m_program, "normal_matrix");
-
-    glEnableVertexAttribArray(context.position_attrib);
-    glEnableVertexAttribArray(context.normal_attrib);
+    glEnableVertexAttribArray(m_program_context.position_attrib);
+    glEnableVertexAttribArray(m_program_context.normal_attrib);
 
     if (m_camera != nullptr) {
-        m_camera->render(context);
+        m_camera->render(m_program_context);
     }
 
     for (auto drawable : m_drawable_list) {
-        drawable->render(context);
+        drawable->render(m_program_context);
     }
 }
 

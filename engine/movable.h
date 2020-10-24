@@ -20,10 +20,14 @@ protected:
     glm::mat4 get_global_matrix() const;
 
 private:
+    void update_local_matrix();
+
+private:
     std::shared_ptr<movable> m_parent;
     glm::vec3 m_position = glm::vec3(0, 0, 0);
     glm::vec3 m_rotation = glm::vec3(0, 0, 0);
     glm::vec3 m_scale = glm::vec3(1, 1, 1);
+    glm::mat4 m_local_matrix;
 };
 
 }

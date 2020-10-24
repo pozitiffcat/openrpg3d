@@ -64,6 +64,20 @@ void init() {
     mesh_drawable = renderer->create_drawable();
     mesh_drawable->attach_mesh(cube_mesh);
     renderer->attach_drawable(mesh_drawable);
+
+    {
+        auto mesh_drawable = renderer->create_drawable();
+        mesh_drawable->attach_mesh(cube_mesh);
+        mesh_drawable->set_position(4, 0, 0);
+        renderer->attach_drawable(mesh_drawable);
+    }
+
+    {
+        auto mesh_drawable = renderer->create_drawable();
+        mesh_drawable->attach_mesh(cube_mesh);
+        mesh_drawable->set_position(-4, 0, 0);
+        renderer->attach_drawable(mesh_drawable);
+    }
 }
 
 void display() {
@@ -79,6 +93,22 @@ void display() {
 
     mesh_drawable->set_rotation(0, r, 0);
     renderer->render_frame();
+
+
+    static int fps = 0;
+    static int last_fps_time = 0;
+    fps++;
+    last_fps_time += delta_time_millis;
+
+    if (last_fps_time >= 1000) {
+        char window_title[128];
+        sprintf(window_title, "openrpg3d FPS: %d", fps);
+        glutSetWindowTitle(window_title);
+
+        fps = 0;
+        last_fps_time = 0;
+    }
+
     glutSwapBuffers();
     glutPostRedisplay();
 }
@@ -89,7 +119,7 @@ int main(int argc, char **argv)
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(640, 480);
     glutInitWindowPosition(100, 100);
-    glutCreateWindow("RPG");
+    glutCreateWindow("openrpg3d");
     glewInit();
     init();
     glutDisplayFunc(display);

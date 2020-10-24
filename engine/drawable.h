@@ -3,7 +3,7 @@
 
 #include "movable.h"
 
-#include <list>
+#include <vector>
 #include "render_context.h"
 
 namespace engine {
@@ -21,7 +21,7 @@ private:
     void render(const render_context &context);
 
 private:
-    std::list<std::shared_ptr<mesh>> m_mesh_list;
+    std::vector<std::shared_ptr<mesh>> m_mesh_list;
 };
 
 }
