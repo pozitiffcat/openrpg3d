@@ -2,8 +2,11 @@
 #define RENDER_CONTEXT_H
 
 #include <GL/glew.h>
+#include <memory>
 
 namespace engine {
+
+class texture;
 
 struct render_context {
     GLint position_attrib;
@@ -19,6 +22,9 @@ struct render_context {
     GLint diffuse_texture_uniform;
     GLint normal_texture_uniform;
     GLint roughness_texture_uniform;
+    std::shared_ptr<texture> default_diffuse_texture;
+    std::shared_ptr<texture> default_normal_texture;
+    std::shared_ptr<texture> default_roughness_texture;
 };
 
 }

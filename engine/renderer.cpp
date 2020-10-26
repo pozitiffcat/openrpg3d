@@ -15,30 +15,6 @@
 
 namespace {
 
-const char *debug_vertex_shader =
-        "#version 330 core\n"
-        "in vec3 position;\n"
-        "in vec3 normal;\n"
-        "out vec3 n;\n"
-        "uniform mat4 proj_view_matrix;\n"
-        "uniform mat4 model_matrix;\n"
-        "void main(void)\n"
-        "{\n"
-        "   n = normal;\n"
-        "	gl_Position = proj_view_matrix * model_matrix * vec4(position, 1.0);\n"
-        "}\n";
-
-const char *debug_fragment_shader =
-        "#version 330 core\n"
-        "in vec3 n;\n"
-        "uniform mat3 normal_matrix;\n"
-        "out vec4 color;\n"
-        "void main(void)\n"
-        "{\n"
-        "   vec3 nn = (normalize(normal_matrix * n) + vec3(1.0)) * vec3(0.5);\n"
-        "	color = vec4(nn, 1.0);\n"
-        "}\n";
-
 const char *vertex_shader =
         "#version 330 core\n"
         "in vec3 position;\n"
@@ -135,7 +111,6 @@ namespace engine {
 renderer::renderer()
 {
     m_program = create_compiled_program(vertex_shader, fragment_shader);
-//    m_program = create_compiled_program(debug_vertex_shader, debug_fragment_shader);
     m_program_context.position_attrib = glGetAttribLocation(m_program, "position");
     m_program_context.normal_attrib = glGetAttribLocation(m_program, "normal");
     m_program_context.tangent_attrib = glGetAttribLocation(m_program, "tangent");
@@ -149,6 +124,33 @@ renderer::renderer()
     m_program_context.diffuse_texture_uniform = glGetUniformLocation(m_program, "diffuse_texture");
     m_program_context.normal_texture_uniform = glGetUniformLocation(m_program, "normal_texture");
     m_program_context.roughness_texture_uniform = glGetUniformLocation(m_program, "roughness_texture");
+
+    {
+        texture_data data;
+        data.width = 32;
+        data.height = 32;
+        for (int i = 0; i < 32 * 32; ++i)
+            data.rgba.push_back(rgba_data { 255, 255, 255, 255 });
+        m_program_context.default_diffuse_texture = create_texture(data);
+    }
+
+    {
+        texture_data data;
+        data.width = 32;
+        data.height = 32;
+        for (int i = 0; i < 32 * 32; ++i)
+            data.rgba.push_back(rgba_data { 127, 127, 255, 255 });
+        m_program_context.default_normal_texture = create_texture(data);
+    }
+
+    {
+        texture_data data;
+        data.width = 32;
+        data.height = 32;
+        for (int i = 0; i < 32 * 32; ++i)
+            data.rgba.push_back(rgba_data { 255, 255, 255, 255 });
+        m_program_context.default_roughness_texture = create_texture(data);
+    }
 }
 
 std::shared_ptr<camera> renderer::create_camera()

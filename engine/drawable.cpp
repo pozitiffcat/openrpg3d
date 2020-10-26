@@ -33,9 +33,9 @@ void drawable::render(const render_context &context)
         m_material.diffuse_texture->bind();
         glUniform1i(context.diffuse_texture_uniform, 0);
     } else {
-        // TODO: bind empty texture from context
-        glActiveTexture(GL_TEXTURE10);
-        glUniform1i(context.diffuse_texture_uniform, 10);
+        glActiveTexture(GL_TEXTURE0);
+        context.default_diffuse_texture->bind();
+        glUniform1i(context.diffuse_texture_uniform, 0);
     }
 
     // normal
@@ -45,9 +45,9 @@ void drawable::render(const render_context &context)
         m_material.normal_texture->bind();
         glUniform1i(context.normal_texture_uniform, 1);
     } else {
-        // TODO: bind empty texture from context
-        glActiveTexture(GL_TEXTURE10);
-        glUniform1i(context.normal_texture_uniform, 10);
+        glActiveTexture(GL_TEXTURE1);
+        context.default_normal_texture->bind();
+        glUniform1i(context.normal_texture_uniform, 1);
     }
 
     // roughness
@@ -57,9 +57,9 @@ void drawable::render(const render_context &context)
         m_material.roughness_texture->bind();
         glUniform1i(context.roughness_texture_uniform, 2);
     } else {
-        // TODO: bind empty texture from context
-        glActiveTexture(GL_TEXTURE10);
-        glUniform1i(context.roughness_texture_uniform, 10);
+        glActiveTexture(GL_TEXTURE2);
+        context.default_roughness_texture->bind();
+        glUniform1i(context.roughness_texture_uniform, 2);
     }
 
     m_mesh->render(context);
