@@ -14,4 +14,10 @@ add_executable(rpg main.cpp
     engine/texture.cpp
 )
 
-target_link_libraries(rpg GL GLEW glut freeimage)
+target_link_libraries(rpg
+    GL
+    GLEW
+    glut
+    freeimage
+    assimp
+)

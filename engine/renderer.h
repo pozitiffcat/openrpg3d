@@ -22,6 +22,7 @@ public:
     explicit renderer();
     std::shared_ptr<camera> create_camera();
     std::shared_ptr<mesh> create_mesh(const mesh_data &data);
+    std::shared_ptr<mesh> load_mesh(const char *name);
     std::shared_ptr<drawable> create_drawable();
     std::shared_ptr<texture> create_texture(const texture_data &data);
     std::shared_ptr<texture> load_texture(const char *name);

@@ -7,11 +7,28 @@ namespace engine {
 
 camera::camera()
 {
-    m_projection_matrix = glm::perspective(glm::degrees(70.0), 1.3, 1.0, 100.0);
+    update_projection_matrix();
+}
+
+void camera::set_viewport(int x, int y, unsigned short width, unsigned short height)
+{
+    m_viewport_x = x;
+    m_viewport_y = y;
+    m_viewport_width = width;
+    m_viewport_height = height;
+    update_projection_matrix();
+}
+
+void camera::update_projection_matrix()
+{
+    auto aspect = static_cast<double>(m_viewport_width) / m_viewport_height;
+    m_projection_matrix = glm::perspective(glm::radians(m_fov), aspect, m_near, m_far);
 }
 
 void camera::render(const render_context &context)
 {
+    glViewport(m_viewport_x, m_viewport_y, m_viewport_width, m_viewport_height);
+
     glClearColor(0.2, 0.3, 0.5, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

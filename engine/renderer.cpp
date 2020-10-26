@@ -1,6 +1,11 @@
 #include "renderer.h"
 
 #include <FreeImage.h>
+
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+
 #include <string.h>
 
 #include "camera.h"
@@ -13,19 +18,25 @@ namespace {
 const char *debug_vertex_shader =
         "#version 330 core\n"
         "in vec3 position;\n"
+        "in vec3 normal;\n"
+        "out vec3 n;\n"
         "uniform mat4 proj_view_matrix;\n"
         "uniform mat4 model_matrix;\n"
         "void main(void)\n"
         "{\n"
+        "   n = normal;\n"
         "	gl_Position = proj_view_matrix * model_matrix * vec4(position, 1.0);\n"
         "}\n";
 
 const char *debug_fragment_shader =
         "#version 330 core\n"
+        "in vec3 n;\n"
+        "uniform mat3 normal_matrix;\n"
         "out vec4 color;\n"
         "void main(void)\n"
         "{\n"
-        "	color = vec4(1.0);\n"
+        "   vec3 nn = (normalize(normal_matrix * n) + vec3(1.0)) * vec3(0.5);\n"
+        "	color = vec4(nn, 1.0);\n"
         "}\n";
 
 const char *vertex_shader =
@@ -57,9 +68,9 @@ const char *fragment_shader =
         "uniform sampler2D diffuse_texture;\n"
         "void main(void)\n"
         "{\n"
-        "   vec3 light_pos = vec3(0.0, 7.0, -10.0);\n"
+        "   vec3 light_pos = vec3(0.0, 0.0, -10.0);\n"
         "   vec3 light_dir = normalize(light_pos - p);\n"
-        "   float shade = dot(normal_matrix * n, light_dir);\n"
+        "   float shade = dot(normalize(normal_matrix * n), light_dir);\n"
         "	color = max(shade, 0.2) * texture(diffuse_texture, t);\n"
         "}\n";
 
@@ -126,6 +137,28 @@ std::shared_ptr<camera> renderer::create_camera()
 std::shared_ptr<mesh> renderer::create_mesh(const mesh_data &data)
 {
     return std::make_shared<mesh>(data);
+}
+
+std::shared_ptr<mesh> renderer::load_mesh(const char *name)
+{
+    mesh_data data;
+
+    Assimp::Importer importer;
+    auto scene = importer.ReadFile(name, aiProcess_Triangulate | aiProcess_GenSmoothNormals);
+
+    for (size_t i = 0; i < scene->mNumMeshes; ++i) {
+        auto mesh = scene->mMeshes[i];
+        for (size_t j = 0; j < mesh->mNumVertices; ++j) {
+            const auto &v = mesh->mVertices[j];
+            const auto &n = mesh->mNormals[j];
+            if (mesh->GetNumUVChannels() >= 1) {
+                const auto &t = mesh->mTextureCoords[0][j];
+                data.vertices.push_back(vertex { v.x, v.y, v.z, n.x, n.y, n.z, t.x, t.y });
+            }
+        }
+    }
+
+    return create_mesh(data);
 }
 
 std::shared_ptr<drawable> renderer::create_drawable()

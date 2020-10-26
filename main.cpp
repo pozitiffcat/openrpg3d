@@ -8,12 +8,13 @@
 #include "engine/drawable.h"
 
 std::shared_ptr<engine::renderer> renderer;
+std::shared_ptr<engine::camera> camera;
 std::shared_ptr<engine::drawable> mesh_drawable;
 
 void init() {
     renderer = std::make_shared<engine::renderer>();
 
-    auto camera = renderer->create_camera();
+    camera = renderer->create_camera();
     camera->set_position(0, 2, -4);
     camera->set_rotation(20, 0, 0);
     renderer->attach_camera(camera);
@@ -55,37 +56,46 @@ void init() {
     }
     auto cube_mesh = renderer->create_mesh(cube_data);
 
-    engine::material_data cube_material_1;
-    cube_material_1.diffuse_texture = renderer->load_texture("crate_1.jpg");
+//    engine::material_data cube_material_1;
+//    cube_material_1.diffuse_texture = renderer->load_texture("crate_1.jpg");
 
-    engine::material_data cube_material_2;
-    cube_material_2.diffuse_texture = renderer->load_texture("crate_2.jpg");
+//    engine::material_data cube_material_2;
+//    cube_material_2.diffuse_texture = renderer->load_texture("crate_2.jpg");
 
-    engine::material_data cube_material_3;
-    cube_material_3.diffuse_texture = renderer->load_texture("crate_3.png");
+//    engine::material_data cube_material_3;
+//    cube_material_3.diffuse_texture = renderer->load_texture("crate_3.png");
 
+//    mesh_drawable = renderer->create_drawable();
+//    mesh_drawable->attach_mesh(cube_mesh);
+//    mesh_drawable->attach_material(cube_material_1);
+//    renderer->attach_drawable(mesh_drawable);
+
+//    {
+//        auto mesh_drawable = renderer->create_drawable();
+//        mesh_drawable->attach_mesh(cube_mesh);
+//        mesh_drawable->attach_material(cube_material_2);
+//        mesh_drawable->set_position(4, 0.25, 0);
+//        mesh_drawable->set_scale(1, 1.5, 1);
+//        renderer->attach_drawable(mesh_drawable);
+//    }
+
+//    {
+//        auto mesh_drawable = renderer->create_drawable();
+//        mesh_drawable->attach_mesh(cube_mesh);
+//        mesh_drawable->attach_material(cube_material_3);
+//        mesh_drawable->set_position(-4, 0.25, 0);
+//        mesh_drawable->set_scale(1, 1.5, 1);
+//        renderer->attach_drawable(mesh_drawable);
+//    }
+
+    auto assimp_mesh = renderer->load_mesh("model/model.dae");
+    engine::material_data assimp_material;
+    assimp_material.diffuse_texture = renderer->load_texture("model/textures/beekaybee_albedo.jpg");
     mesh_drawable = renderer->create_drawable();
-    mesh_drawable->attach_mesh(cube_mesh);
-    mesh_drawable->attach_material(cube_material_1);
+    mesh_drawable->attach_mesh(assimp_mesh);
+    mesh_drawable->attach_material(assimp_material);
     renderer->attach_drawable(mesh_drawable);
-
-    {
-        auto mesh_drawable = renderer->create_drawable();
-        mesh_drawable->attach_mesh(cube_mesh);
-        mesh_drawable->attach_material(cube_material_2);
-        mesh_drawable->set_position(4, 0.25, 0);
-        mesh_drawable->set_scale(1, 1.5, 1);
-        renderer->attach_drawable(mesh_drawable);
-    }
-
-    {
-        auto mesh_drawable = renderer->create_drawable();
-        mesh_drawable->attach_mesh(cube_mesh);
-        mesh_drawable->attach_material(cube_material_3);
-        mesh_drawable->set_position(-4, 0.25, 0);
-        mesh_drawable->set_scale(1, 1.5, 1);
-        renderer->attach_drawable(mesh_drawable);
-    }
+    mesh_drawable->set_scale(3, 3, 3);
 }
 
 void display() {
@@ -121,6 +131,10 @@ void display() {
     glutPostRedisplay();
 }
 
+void reshape(int w, int h) {
+    camera->set_viewport(0, 0, w, h);
+}
+
 int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
@@ -131,6 +145,7 @@ int main(int argc, char **argv)
     glewInit();
     init();
     glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
     glutMainLoop();
     return 0;
 }
