@@ -4,13 +4,13 @@
 
 namespace engine {
 
-mesh::mesh(const mesh_def &def)
+mesh::mesh(const mesh_data &data)
     : m_buffer(0),
-      m_vertices_count(def.vertices.size())
+      m_vertices_count(data.vertices.size())
 {
     glGenBuffers(1, &m_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-    glBufferData(GL_ARRAY_BUFFER, m_vertices_count * sizeof(vertex), def.vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_vertices_count * sizeof(vertex), data.vertices.data(), GL_STATIC_DRAW);
 }
 
 mesh::~mesh()
@@ -27,6 +27,15 @@ void mesh::render(const render_context &context)
 
     if (context.normal_attrib != -1)
         glVertexAttribPointer(context.normal_attrib, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (const GLvoid*) 12);
+
+    if (context.texcoord_attrib != -1)
+        glVertexAttribPointer(context.texcoord_attrib, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (const GLvoid*) 24);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+
+    if (context.diffuse_texture_uniform != -1)
+        glUniform1i(context.diffuse_texture_uniform, 0);
 
     glDrawArrays(GL_TRIANGLES, 0, m_vertices_count);
 }

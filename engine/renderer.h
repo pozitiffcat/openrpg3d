@@ -6,21 +6,24 @@
 #include <memory>
 
 #include "render_context.h"
-#include "mesh_def.h"
+#include "mesh_data.h"
+#include "texture_data.h"
 
 namespace engine {
 
 class camera;
 class mesh;
 class drawable;
+class texture;
 
 class renderer
 {
 public:
     explicit renderer();
     std::shared_ptr<camera> create_camera();
-    std::shared_ptr<mesh> create_mesh(const mesh_def &def);
+    std::shared_ptr<mesh> create_mesh(const mesh_data &data);
     std::shared_ptr<drawable> create_drawable();
+    std::shared_ptr<texture> create_texture(const texture_data &data);
     void attach_camera(const std::shared_ptr<camera> &camera);
     void attach_drawable(const std::shared_ptr<drawable> &drawable);
     void render_frame();

@@ -6,6 +6,7 @@ namespace engine {
 struct vertex {
     float x, y, z;          // posiitons
     float nx, ny, nz;       // normals
+    float tu, tv;           // UV texcoords
 };
 
 }

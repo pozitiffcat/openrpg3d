@@ -7,7 +7,12 @@ namespace engine {
 
 void drawable::attach_mesh(const std::shared_ptr<mesh> &mesh)
 {
-    m_mesh_list.push_back(mesh);
+    m_mesh = mesh;
+}
+
+void drawable::attach_material(const material_data &material)
+{
+    m_material = material;
 }
 
 void drawable::render(const render_context &context)
@@ -20,9 +25,7 @@ void drawable::render(const render_context &context)
     if (context.normal_matrix_uniform != -1)
         glUniformMatrix3fv(context.normal_matrix_uniform, 1, false, glm::value_ptr(glm::inverseTranspose(glm::mat3(global_matrix))));
 
-    for (auto mesh : m_mesh_list) {
-        mesh->render(context);
-    }
+    m_mesh->render(context);
 }
 
 }

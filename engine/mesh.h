@@ -1,7 +1,7 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "mesh_def.h"
+#include "mesh_data.h"
 #include "render_context.h"
 
 namespace engine {
@@ -12,7 +12,7 @@ class mesh
 {
     friend class drawable;
 public:
-    explicit mesh(const mesh_def &def);
+    explicit mesh(const mesh_data &data);
     ~mesh();
 
 private:

@@ -19,50 +19,59 @@ void init() {
     renderer->attach_camera(camera);
 
     std::vector<engine::vertex> cube_quad_vertices;
-    cube_quad_vertices.push_back(engine::vertex { -1, -1,  1, 0, 0, 1 });
-    cube_quad_vertices.push_back(engine::vertex { 1, -1,  1, 0, 0, 1 });
-    cube_quad_vertices.push_back(engine::vertex { 1,  1,  1, 0, 0, 1 });
-    cube_quad_vertices.push_back(engine::vertex { -1,  1,  1, 0, 0, 1 });
-    cube_quad_vertices.push_back(engine::vertex { -1, -1, -1, 0, 0, -1 });
-    cube_quad_vertices.push_back(engine::vertex { -1,  1, -1, 0, 0, -1 });
-    cube_quad_vertices.push_back(engine::vertex { 1,  1, -1, 0, 0, -1 });
-    cube_quad_vertices.push_back(engine::vertex { 1, -1, -1, 0, 0, -1 });
-    cube_quad_vertices.push_back(engine::vertex { -1,  1, -1, 0, 1, 0 });
-    cube_quad_vertices.push_back(engine::vertex { -1,  1,  1, 0, 1, 0 });
-    cube_quad_vertices.push_back(engine::vertex { 1,  1,  1, 0, 1, 0 });
-    cube_quad_vertices.push_back(engine::vertex { 1,  1, -1, 0, 1, 0 });
-    cube_quad_vertices.push_back(engine::vertex { -1, -1, -1, 0, -1, 0 });
-    cube_quad_vertices.push_back(engine::vertex { 1, -1, -1, 0, -1, 0 });
-    cube_quad_vertices.push_back(engine::vertex { 1, -1,  1, 0, -1, 0 });
-    cube_quad_vertices.push_back(engine::vertex { -1, -1,  1, 0, -1, 0 });
-    cube_quad_vertices.push_back(engine::vertex { 1, -1, -1, 1, 0, 0 });
-    cube_quad_vertices.push_back(engine::vertex { 1,  1, -1, 1, 0, 0 });
-    cube_quad_vertices.push_back(engine::vertex { 1,  1,  1, 1, 0, 0 });
-    cube_quad_vertices.push_back(engine::vertex { 1, -1,  1, 1, 0, 0 });
-    cube_quad_vertices.push_back(engine::vertex { -1, -1, -1, -1, 0, 0 });
-    cube_quad_vertices.push_back(engine::vertex { -1, -1,  1, -1, 0, 0 });
-    cube_quad_vertices.push_back(engine::vertex { -1,  1,  1, -1, 0, 0 });
-    cube_quad_vertices.push_back(engine::vertex { -1,  1, -1, -1, 0, 0 });
+    cube_quad_vertices.push_back(engine::vertex { -1, -1,  1, 0, 0, 1, 0, 0 });
+    cube_quad_vertices.push_back(engine::vertex { 1, -1,  1, 0, 0, 1, 0, 1 });
+    cube_quad_vertices.push_back(engine::vertex { 1,  1,  1, 0, 0, 1, 1, 1 });
+    cube_quad_vertices.push_back(engine::vertex { -1,  1,  1, 0, 0, 1, 1, 0 });
+    cube_quad_vertices.push_back(engine::vertex { -1, -1, -1, 0, 0, -1, 0, 0 });
+    cube_quad_vertices.push_back(engine::vertex { -1,  1, -1, 0, 0, -1, 0, 1 });
+    cube_quad_vertices.push_back(engine::vertex { 1,  1, -1, 0, 0, -1, 1, 1 });
+    cube_quad_vertices.push_back(engine::vertex { 1, -1, -1, 0, 0, -1, 1, 0 });
+    cube_quad_vertices.push_back(engine::vertex { -1,  1, -1, 0, 1, 0, 0, 0 });
+    cube_quad_vertices.push_back(engine::vertex { -1,  1,  1, 0, 1, 0, 0, 1 });
+    cube_quad_vertices.push_back(engine::vertex { 1,  1,  1, 0, 1, 0, 1, 0 });
+    cube_quad_vertices.push_back(engine::vertex { 1,  1, -1, 0, 1, 0, 1, 1 });
+    cube_quad_vertices.push_back(engine::vertex { -1, -1, -1, 0, -1, 0, 0, 0 });
+    cube_quad_vertices.push_back(engine::vertex { 1, -1, -1, 0, -1, 0, 0, 1 });
+    cube_quad_vertices.push_back(engine::vertex { 1, -1,  1, 0, -1, 0, 1, 0 });
+    cube_quad_vertices.push_back(engine::vertex { -1, -1,  1, 0, -1, 0, 1, 1 });
+    cube_quad_vertices.push_back(engine::vertex { 1, -1, -1, 1, 0, 0, 0, 0 });
+    cube_quad_vertices.push_back(engine::vertex { 1,  1, -1, 1, 0, 0, 0, 1 });
+    cube_quad_vertices.push_back(engine::vertex { 1,  1,  1, 1, 0, 0, 1, 1 });
+    cube_quad_vertices.push_back(engine::vertex { 1, -1,  1, 1, 0, 0, 1, 0 });
+    cube_quad_vertices.push_back(engine::vertex { -1, -1, -1, -1, 0, 0, 0, 0 });
+    cube_quad_vertices.push_back(engine::vertex { -1, -1,  1, -1, 0, 0, 0, 1 });
+    cube_quad_vertices.push_back(engine::vertex { -1,  1,  1, -1, 0, 0, 1, 1 });
+    cube_quad_vertices.push_back(engine::vertex { -1,  1, -1, -1, 0, 0, 1, 0 });
 
-    engine::mesh_def cube_def;
+    engine::mesh_data cube_data;
     for (size_t i = 0; i < cube_quad_vertices.size(); i += 4) {
-        cube_def.vertices.push_back(cube_quad_vertices[i + 0]);
-        cube_def.vertices.push_back(cube_quad_vertices[i + 1]);
-        cube_def.vertices.push_back(cube_quad_vertices[i + 2]);
-        cube_def.vertices.push_back(cube_quad_vertices[i + 0]);
-        cube_def.vertices.push_back(cube_quad_vertices[i + 2]);
-        cube_def.vertices.push_back(cube_quad_vertices[i + 3]);
+        cube_data.vertices.push_back(cube_quad_vertices[i + 0]);
+        cube_data.vertices.push_back(cube_quad_vertices[i + 1]);
+        cube_data.vertices.push_back(cube_quad_vertices[i + 2]);
+        cube_data.vertices.push_back(cube_quad_vertices[i + 0]);
+        cube_data.vertices.push_back(cube_quad_vertices[i + 2]);
+        cube_data.vertices.push_back(cube_quad_vertices[i + 3]);
     }
-    auto cube_mesh = renderer->create_mesh(cube_def);
+    auto cube_mesh = renderer->create_mesh(cube_data);
 
-    engine::mesh_def triangle_def;
-    triangle_def.vertices.push_back(engine::vertex { -1, 0, 0, 0, 0, -1 });
-    triangle_def.vertices.push_back(engine::vertex { 0, 1, 0, 0, 0, -1 });
-    triangle_def.vertices.push_back(engine::vertex { 1, 0, 0, 0, 0, -1 });
-    auto triangle_mesh = renderer->create_mesh(triangle_def);
+    engine::texture_data cube_texture_data;
+    cube_texture_data.width = 32;
+    cube_texture_data.height = 32;
+    for (int i = 0; i < 32; ++i) {
+        for (int j = 0; j < 32; ++j) {
+            cube_texture_data.rgba.push_back(
+                engine::rgba_data { 0, static_cast<unsigned char>(i * 8), static_cast<unsigned char>(j * 8), 255 }
+            );
+        }
+    }
+
+    engine::material_data cube_material;
+    cube_material.diffuse_texture = renderer->create_texture(cube_texture_data);
 
     mesh_drawable = renderer->create_drawable();
     mesh_drawable->attach_mesh(cube_mesh);
+    mesh_drawable->attach_material(cube_material);
     renderer->attach_drawable(mesh_drawable);
 
     {
