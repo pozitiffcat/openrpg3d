@@ -19,11 +19,9 @@ texture::~texture()
     glDeleteTextures(1, &m_texture);
 }
 
-void texture::render(const render_context &context)
+void texture::bind()
 {
-    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_texture);
-    glUniform1i(context.diffuse_texture_uniform, 0);
 }
 
 }

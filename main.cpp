@@ -19,78 +19,10 @@ void init() {
     camera->set_rotation(20, 0, 0);
     renderer->attach_camera(camera);
 
-    std::vector<engine::vertex> cube_quad_vertices;
-    cube_quad_vertices.push_back(engine::vertex { -1, -1,  1, 0, 0, 1, 0, 0 });
-    cube_quad_vertices.push_back(engine::vertex { 1, -1,  1, 0, 0, 1, 0, 1 });
-    cube_quad_vertices.push_back(engine::vertex { 1,  1,  1, 0, 0, 1, 1, 1 });
-    cube_quad_vertices.push_back(engine::vertex { -1,  1,  1, 0, 0, 1, 1, 0 });
-    cube_quad_vertices.push_back(engine::vertex { -1, -1, -1, 0, 0, -1, 0, 0 });
-    cube_quad_vertices.push_back(engine::vertex { -1,  1, -1, 0, 0, -1, 0, 1 });
-    cube_quad_vertices.push_back(engine::vertex { 1,  1, -1, 0, 0, -1, 1, 1 });
-    cube_quad_vertices.push_back(engine::vertex { 1, -1, -1, 0, 0, -1, 1, 0 });
-    cube_quad_vertices.push_back(engine::vertex { -1,  1, -1, 0, 1, 0, 0, 0 });
-    cube_quad_vertices.push_back(engine::vertex { -1,  1,  1, 0, 1, 0, 0, 1 });
-    cube_quad_vertices.push_back(engine::vertex { 1,  1,  1, 0, 1, 0, 1, 1 });
-    cube_quad_vertices.push_back(engine::vertex { 1,  1, -1, 0, 1, 0, 1, 0 });
-    cube_quad_vertices.push_back(engine::vertex { -1, -1, -1, 0, -1, 0, 0, 0 });
-    cube_quad_vertices.push_back(engine::vertex { 1, -1, -1, 0, -1, 0, 0, 1 });
-    cube_quad_vertices.push_back(engine::vertex { 1, -1,  1, 0, -1, 0, 1, 1 });
-    cube_quad_vertices.push_back(engine::vertex { -1, -1,  1, 0, -1, 0, 1, 0 });
-    cube_quad_vertices.push_back(engine::vertex { 1, -1, -1, 1, 0, 0, 0, 0 });
-    cube_quad_vertices.push_back(engine::vertex { 1,  1, -1, 1, 0, 0, 0, 1 });
-    cube_quad_vertices.push_back(engine::vertex { 1,  1,  1, 1, 0, 0, 1, 1 });
-    cube_quad_vertices.push_back(engine::vertex { 1, -1,  1, 1, 0, 0, 1, 0 });
-    cube_quad_vertices.push_back(engine::vertex { -1, -1, -1, -1, 0, 0, 0, 0 });
-    cube_quad_vertices.push_back(engine::vertex { -1, -1,  1, -1, 0, 0, 0, 1 });
-    cube_quad_vertices.push_back(engine::vertex { -1,  1,  1, -1, 0, 0, 1, 1 });
-    cube_quad_vertices.push_back(engine::vertex { -1,  1, -1, -1, 0, 0, 1, 0 });
-
-    engine::mesh_data cube_data;
-    for (size_t i = 0; i < cube_quad_vertices.size(); i += 4) {
-        cube_data.vertices.push_back(cube_quad_vertices[i + 0]);
-        cube_data.vertices.push_back(cube_quad_vertices[i + 1]);
-        cube_data.vertices.push_back(cube_quad_vertices[i + 2]);
-        cube_data.vertices.push_back(cube_quad_vertices[i + 0]);
-        cube_data.vertices.push_back(cube_quad_vertices[i + 2]);
-        cube_data.vertices.push_back(cube_quad_vertices[i + 3]);
-    }
-    auto cube_mesh = renderer->create_mesh(cube_data);
-
-//    engine::material_data cube_material_1;
-//    cube_material_1.diffuse_texture = renderer->load_texture("crate_1.jpg");
-
-//    engine::material_data cube_material_2;
-//    cube_material_2.diffuse_texture = renderer->load_texture("crate_2.jpg");
-
-//    engine::material_data cube_material_3;
-//    cube_material_3.diffuse_texture = renderer->load_texture("crate_3.png");
-
-//    mesh_drawable = renderer->create_drawable();
-//    mesh_drawable->attach_mesh(cube_mesh);
-//    mesh_drawable->attach_material(cube_material_1);
-//    renderer->attach_drawable(mesh_drawable);
-
-//    {
-//        auto mesh_drawable = renderer->create_drawable();
-//        mesh_drawable->attach_mesh(cube_mesh);
-//        mesh_drawable->attach_material(cube_material_2);
-//        mesh_drawable->set_position(4, 0.25, 0);
-//        mesh_drawable->set_scale(1, 1.5, 1);
-//        renderer->attach_drawable(mesh_drawable);
-//    }
-
-//    {
-//        auto mesh_drawable = renderer->create_drawable();
-//        mesh_drawable->attach_mesh(cube_mesh);
-//        mesh_drawable->attach_material(cube_material_3);
-//        mesh_drawable->set_position(-4, 0.25, 0);
-//        mesh_drawable->set_scale(1, 1.5, 1);
-//        renderer->attach_drawable(mesh_drawable);
-//    }
-
     auto assimp_mesh = renderer->load_mesh("model/model.dae");
     engine::material_data assimp_material;
     assimp_material.diffuse_texture = renderer->load_texture("model/textures/beekaybee_albedo.jpg");
+    assimp_material.normal_texture = renderer->load_texture("model/textures/beekaybee_normal.png");
     mesh_drawable = renderer->create_drawable();
     mesh_drawable->attach_mesh(assimp_mesh);
     mesh_drawable->attach_material(assimp_material);
@@ -106,7 +38,7 @@ void display() {
     int delta_time_millis = millis - last_time_millis;
     last_time_millis = millis;
 
-    static float r = 0;
+    static float r = 180;
     r += (delta_time_millis * 0.001 * 20); // 20 degrees per sec
 
     mesh_drawable->set_rotation(0, r, 0);

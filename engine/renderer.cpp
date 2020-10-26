@@ -43,35 +43,43 @@ const char *vertex_shader =
         "#version 330 core\n"
         "in vec3 position;\n"
         "in vec3 normal;\n"
+        "in vec3 tangent;\n"
+        "in vec3 bitangent;\n"
         "in vec2 texcoord;\n"
         "uniform mat4 proj_matrix;\n"
         "uniform mat4 view_matrix;\n"
         "uniform mat4 model_matrix;\n"     
         "out vec3 p;\n"
-        "out vec3 n;\n"
         "out vec2 t;\n"
+        "out mat3 TBN;\n"
         "void main(void)\n"
         "{\n"
         "   p = (model_matrix * vec4(position, 1.0)).xyz;\n"
-        "   n = normal;\n"
         "   t = texcoord;\n"
+        "   vec3 T = normalize(vec3(model_matrix * vec4(tangent,   0.0)));\n"
+        "   vec3 B = normalize(vec3(model_matrix * vec4(bitangent, 0.0)));\n"
+        "   vec3 N = normalize(vec3(model_matrix * vec4(normal,    0.0)));\n"
+        "   TBN = mat3(T, B, N);\n"
         "	gl_Position = proj_matrix * view_matrix * model_matrix * vec4(position, 1.0);\n"
         "}\n";
 
 const char *fragment_shader =
         "#version 330 core\n"
         "in vec3 p;\n"
-        "in vec3 n;\n"
         "in vec2 t;\n"
+        "in mat3 TBN;\n"
         "out vec4 color;\n"
-        "uniform mat3 normal_matrix;\n"
         "uniform sampler2D diffuse_texture;\n"
+        "uniform sampler2D normal_texture;\n"
         "void main(void)\n"
         "{\n"
         "   vec3 light_pos = vec3(0.0, 0.0, -10.0);\n"
         "   vec3 light_dir = normalize(light_pos - p);\n"
-        "   float shade = dot(normalize(normal_matrix * n), light_dir);\n"
-        "	color = max(shade, 0.2) * texture(diffuse_texture, t);\n"
+        "   vec3 normal = texture(normal_texture, t).xyz * 2.0 - 1.0;\n"
+        "   normal = normalize(TBN * normal);\n"
+        "   float shade = dot(normal, light_dir);\n"
+        "   vec4 ambient = vec4(0.04, 0.08, 0.16, 1.0);\n"
+        "	color = ambient * (1.0 - shade) + shade * texture(diffuse_texture, t);\n"
         "}\n";
 
 GLuint create_compiled_shader(const char *source, GLenum type)
@@ -120,6 +128,8 @@ renderer::renderer()
 //    m_program = create_compiled_program(debug_vertex_shader, debug_fragment_shader);
     m_program_context.position_attrib = glGetAttribLocation(m_program, "position");
     m_program_context.normal_attrib = glGetAttribLocation(m_program, "normal");
+    m_program_context.tangent_attrib = glGetAttribLocation(m_program, "tangent");
+    m_program_context.bitangent_attrib = glGetAttribLocation(m_program, "bitangent");
     m_program_context.texcoord_attrib = glGetAttribLocation(m_program, "texcoord");
     m_program_context.proj_matrix_uniform = glGetUniformLocation(m_program, "proj_matrix");
     m_program_context.view_matrix_uniform = glGetUniformLocation(m_program, "view_matrix");
@@ -127,6 +137,7 @@ renderer::renderer()
     m_program_context.model_matrix_uniform = glGetUniformLocation(m_program, "model_matrix");
     m_program_context.normal_matrix_uniform = glGetUniformLocation(m_program, "normal_matrix");
     m_program_context.diffuse_texture_uniform = glGetUniformLocation(m_program, "diffuse_texture");
+    m_program_context.normal_texture_uniform = glGetUniformLocation(m_program, "normal_texture");
 }
 
 std::shared_ptr<camera> renderer::create_camera()
@@ -144,16 +155,26 @@ std::shared_ptr<mesh> renderer::load_mesh(const char *name)
     mesh_data data;
 
     Assimp::Importer importer;
-    auto scene = importer.ReadFile(name, aiProcess_Triangulate | aiProcess_GenSmoothNormals);
+    auto scene = importer.ReadFile(name, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
 
     for (size_t i = 0; i < scene->mNumMeshes; ++i) {
         auto mesh = scene->mMeshes[i];
         for (size_t j = 0; j < mesh->mNumVertices; ++j) {
             const auto &v = mesh->mVertices[j];
             const auto &n = mesh->mNormals[j];
+            const auto &tg = mesh->mTangents[j];
+            const auto &bt = mesh->mBitangents[j];
             if (mesh->GetNumUVChannels() >= 1) {
                 const auto &t = mesh->mTextureCoords[0][j];
-                data.vertices.push_back(vertex { v.x, v.y, v.z, n.x, n.y, n.z, t.x, t.y });
+                data.vertices.push_back(
+                    vertex {
+                        v.x, v.y, v.z,
+                        n.x, n.y, n.z,
+                        tg.x, tg.y, tg.z,
+                        bt.x, bt.y, bt.z,
+                        t.x, t.y
+                    }
+                );
             }
         }
     }
@@ -224,6 +245,8 @@ void renderer::render_frame()
 
     glEnableVertexAttribArray(m_program_context.position_attrib);
     glEnableVertexAttribArray(m_program_context.normal_attrib);
+    glEnableVertexAttribArray(m_program_context.tangent_attrib);
+    glEnableVertexAttribArray(m_program_context.bitangent_attrib);
     glEnableVertexAttribArray(m_program_context.texcoord_attrib);
 
     if (m_camera != nullptr) {

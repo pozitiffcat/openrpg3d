@@ -28,8 +28,14 @@ void mesh::render(const render_context &context)
     if (context.normal_attrib != -1)
         glVertexAttribPointer(context.normal_attrib, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (const GLvoid*) 12);
 
+    if (context.tangent_attrib != -1)
+        glVertexAttribPointer(context.tangent_attrib, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (const GLvoid*) 24);
+
+    if (context.bitangent_attrib != -1)
+        glVertexAttribPointer(context.bitangent_attrib, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (const GLvoid*) 36);
+
     if (context.texcoord_attrib != -1)
-        glVertexAttribPointer(context.texcoord_attrib, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (const GLvoid*) 24);
+        glVertexAttribPointer(context.texcoord_attrib, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (const GLvoid*) 48);
 
     glDrawArrays(GL_TRIANGLES, 0, m_vertices_count);
 }

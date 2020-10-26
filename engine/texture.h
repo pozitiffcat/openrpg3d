@@ -15,7 +15,7 @@ public:
     ~texture();
 
 private:
-    void render(const render_context &context);
+    void bind();
 
 private:
     GLuint m_texture;
