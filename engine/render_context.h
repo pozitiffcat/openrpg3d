@@ -18,6 +18,7 @@ struct render_context {
     GLint normal_matrix_uniform;
     GLint diffuse_texture_uniform;
     GLint normal_texture_uniform;
+    GLint roughness_texture_uniform;
 };
 
 }

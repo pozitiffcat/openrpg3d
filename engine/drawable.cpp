@@ -26,6 +26,8 @@ void drawable::render(const render_context &context)
     if (context.normal_matrix_uniform != -1)
         glUniformMatrix3fv(context.normal_matrix_uniform, 1, false, glm::value_ptr(glm::inverseTranspose(glm::mat3(global_matrix))));
 
+    // diffuse
+
     if (context.diffuse_texture_uniform != -1 && m_material.diffuse_texture != nullptr) {
         glActiveTexture(GL_TEXTURE0);
         m_material.diffuse_texture->bind();
@@ -36,6 +38,8 @@ void drawable::render(const render_context &context)
         glUniform1i(context.diffuse_texture_uniform, 10);
     }
 
+    // normal
+
     if (context.normal_texture_uniform != -1 && m_material.normal_texture != nullptr) {
         glActiveTexture(GL_TEXTURE1);
         m_material.normal_texture->bind();
@@ -44,6 +48,18 @@ void drawable::render(const render_context &context)
         // TODO: bind empty texture from context
         glActiveTexture(GL_TEXTURE10);
         glUniform1i(context.normal_texture_uniform, 10);
+    }
+
+    // roughness
+
+    if (context.roughness_texture_uniform != -1 && m_material.roughness_texture != nullptr) {
+        glActiveTexture(GL_TEXTURE2);
+        m_material.roughness_texture->bind();
+        glUniform1i(context.roughness_texture_uniform, 2);
+    } else {
+        // TODO: bind empty texture from context
+        glActiveTexture(GL_TEXTURE10);
+        glUniform1i(context.roughness_texture_uniform, 10);
     }
 
     m_mesh->render(context);

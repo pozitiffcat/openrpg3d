@@ -74,6 +74,7 @@ const char *fragment_shader =
         "out vec4 color;\n"
         "uniform sampler2D diffuse_texture;\n"
         "uniform sampler2D normal_texture;\n"
+        "uniform sampler2D roughness_texture;\n"
         "void main(void)\n"
         "{\n"
         "   vec3 light_pos = vec3(0.0, 0.0, -10.0);\n"
@@ -81,11 +82,14 @@ const char *fragment_shader =
         "   vec3 normal = texture(normal_texture, t).xyz * 2.0 - 1.0;\n"
         "   normal = normalize(TBN * normal);\n"
         "   float shade = dot(normal, light_dir);\n"
+        "   float shininess_factor = 32.0;\n"
+        "   float roughness = texture(roughness_texture, t).x;\n"
         "   vec3 reflect_dir = reflect(light_dir, normal);\n"
-        "   float specular = pow(max(0.0, dot(view_dir, reflect_dir)), 25);\n"
-        "   vec4 ambient = vec4(0.04, 0.08, 0.16, 1.0);\n"
-        "	color = ambient * (1.0 - shade) + shade * texture(diffuse_texture, t) + specular;\n"
-//        "   color = vec4(specular);\n"
+        "   float shininess = (pow((1.0 - roughness) * 1.5, 3.0) * shininess_factor);\n"
+        "   float specular = pow(max(0.0, dot(view_dir, reflect_dir)), shininess) * (shininess / shininess_factor);\n"
+        "   vec4 ambient = vec4(0.04, 0.08, 0.16, 1.0) * (1.0 - shade);\n"
+        "	color = ambient + shade * texture(diffuse_texture, t) + specular;\n"
+//        "   color = vec4(shininess) / shininess_factor;\n"
         "}\n";
 
 GLuint create_compiled_shader(const char *source, GLenum type)
@@ -144,6 +148,7 @@ renderer::renderer()
     m_program_context.normal_matrix_uniform = glGetUniformLocation(m_program, "normal_matrix");
     m_program_context.diffuse_texture_uniform = glGetUniformLocation(m_program, "diffuse_texture");
     m_program_context.normal_texture_uniform = glGetUniformLocation(m_program, "normal_texture");
+    m_program_context.roughness_texture_uniform = glGetUniformLocation(m_program, "roughness_texture");
 }
 
 std::shared_ptr<camera> renderer::create_camera()

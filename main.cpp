@@ -23,6 +23,7 @@ void init() {
     engine::material_data assimp_material;
     assimp_material.diffuse_texture = renderer->load_texture("model/textures/beekaybee_albedo.jpg");
     assimp_material.normal_texture = renderer->load_texture("model/textures/beekaybee_normal.png");
+    assimp_material.roughness_texture = renderer->load_texture("model/textures/beekaybee_roughness.jpg");
     mesh_drawable = renderer->create_drawable();
     mesh_drawable->attach_mesh(assimp_mesh);
     mesh_drawable->attach_material(assimp_material);
