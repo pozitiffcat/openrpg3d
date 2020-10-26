@@ -52,6 +52,7 @@ const char *vertex_shader =
         "out vec3 p;\n"
         "out vec2 t;\n"
         "out mat3 TBN;\n"
+        "out vec3 view_dir;\n"
         "void main(void)\n"
         "{\n"
         "   p = (model_matrix * vec4(position, 1.0)).xyz;\n"
@@ -61,6 +62,7 @@ const char *vertex_shader =
         "   vec3 N = normalize(vec3(model_matrix * vec4(normal,    0.0)));\n"
         "   TBN = mat3(T, B, N);\n"
         "	gl_Position = proj_matrix * view_matrix * model_matrix * vec4(position, 1.0);\n"
+        "   view_dir = vec3(0.0, 0.0, 1.0);//-vec3(view_matrix * model_matrix * vec4(position, 1.0));\n"
         "}\n";
 
 const char *fragment_shader =
@@ -68,6 +70,7 @@ const char *fragment_shader =
         "in vec3 p;\n"
         "in vec2 t;\n"
         "in mat3 TBN;\n"
+        "in vec3 view_dir;\n"
         "out vec4 color;\n"
         "uniform sampler2D diffuse_texture;\n"
         "uniform sampler2D normal_texture;\n"
@@ -78,8 +81,11 @@ const char *fragment_shader =
         "   vec3 normal = texture(normal_texture, t).xyz * 2.0 - 1.0;\n"
         "   normal = normalize(TBN * normal);\n"
         "   float shade = dot(normal, light_dir);\n"
+        "   vec3 reflect_dir = reflect(light_dir, normal);\n"
+        "   float specular = pow(max(0.0, dot(view_dir, reflect_dir)), 25);\n"
         "   vec4 ambient = vec4(0.04, 0.08, 0.16, 1.0);\n"
-        "	color = ambient * (1.0 - shade) + shade * texture(diffuse_texture, t);\n"
+        "	color = ambient * (1.0 - shade) + shade * texture(diffuse_texture, t) + specular;\n"
+//        "   color = vec4(specular);\n"
         "}\n";
 
 GLuint create_compiled_shader(const char *source, GLenum type)
