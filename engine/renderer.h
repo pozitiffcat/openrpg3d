@@ -24,6 +24,7 @@ public:
     std::shared_ptr<mesh> create_mesh(const mesh_data &data);
     std::shared_ptr<drawable> create_drawable();
     std::shared_ptr<texture> create_texture(const texture_data &data);
+    std::shared_ptr<texture> load_texture(const char *name);
     void attach_camera(const std::shared_ptr<camera> &camera);
     void attach_drawable(const std::shared_ptr<drawable> &drawable);
     void render_frame();

@@ -31,12 +31,6 @@ void mesh::render(const render_context &context)
     if (context.texcoord_attrib != -1)
         glVertexAttribPointer(context.texcoord_attrib, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (const GLvoid*) 24);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-
-    if (context.diffuse_texture_uniform != -1)
-        glUniform1i(context.diffuse_texture_uniform, 0);
-
     glDrawArrays(GL_TRIANGLES, 0, m_vertices_count);
 }
 

@@ -1,11 +1,12 @@
 #include "renderer.h"
 
+#include <FreeImage.h>
+#include <string.h>
+
 #include "camera.h"
 #include "mesh.h"
 #include "drawable.h"
 #include "texture.h"
-
-#include <string.h>
 
 namespace {
 
@@ -135,6 +136,41 @@ std::shared_ptr<drawable> renderer::create_drawable()
 std::shared_ptr<texture> renderer::create_texture(const texture_data &data)
 {
     return std::make_shared<texture>(data);
+}
+
+std::shared_ptr<texture> renderer::load_texture(const char *name)
+{
+    FREE_IMAGE_FORMAT free_image_format = FreeImage_GetFileType(name, 0);
+    FIBITMAP* fibitmap = FreeImage_Load(free_image_format, name);
+    FIBITMAP* temp = fibitmap;
+    fibitmap = FreeImage_ConvertTo32Bits(fibitmap);
+    FreeImage_Unload(temp);
+
+    int width = FreeImage_GetWidth(fibitmap);
+    int height = FreeImage_GetHeight(fibitmap);
+    char* pixels = (char*)FreeImage_GetBits(fibitmap);
+
+    texture_data data;
+    data.width = width;
+    data.height = height;
+
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            int offset = width * i * 4 + j * 4;
+            data.rgba.push_back(
+                rgba_data {
+                    static_cast<unsigned char>(pixels[offset + 2]),
+                    static_cast<unsigned char>(pixels[offset + 1]),
+                    static_cast<unsigned char>(pixels[offset + 0]),
+                    static_cast<unsigned char>(pixels[offset + 3])
+                }
+            );
+        }
+    }
+
+    FreeImage_Unload(fibitmap);
+
+    return create_texture(data);
 }
 
 void renderer::attach_camera(const std::shared_ptr<camera> &camera)
