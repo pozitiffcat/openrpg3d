@@ -19,16 +19,30 @@ void init() {
     camera->set_rotation(20, 0, 0);
     renderer->attach_camera(camera);
 
-    auto assimp_mesh = renderer->load_mesh("model/model.dae");
+//    auto assimp_mesh = renderer->load_mesh("model/model.dae");
+//    engine::material_data assimp_material;
+//    assimp_material.diffuse_texture = renderer->load_texture("model/textures/beekaybee_albedo.jpg");
+//    assimp_material.normal_texture = renderer->load_texture("model/textures/beekaybee_normal.png");
+//    assimp_material.roughness_texture = renderer->load_texture("model/textures/beekaybee_roughness.jpg");
+//    mesh_drawable = renderer->create_drawable();
+//    mesh_drawable->attach_mesh(assimp_mesh);
+//    mesh_drawable->attach_material(assimp_material);
+//    renderer->attach_drawable(mesh_drawable);
+//    mesh_drawable->set_scale(3, 3, 3);
+
+    auto assimp_mesh = renderer->load_mesh("church/Nousiainen_Church_SF.obj");
     engine::material_data assimp_material;
-    assimp_material.diffuse_texture = renderer->load_texture("model/textures/beekaybee_albedo.jpg");
-    assimp_material.normal_texture = renderer->load_texture("model/textures/beekaybee_normal.png");
-    assimp_material.roughness_texture = renderer->load_texture("model/textures/beekaybee_roughness.jpg");
+    assimp_material.diffuse_texture = renderer->load_texture("church/Nousiainen_Church.jpg");
+    assimp_material.normal_texture = renderer->load_texture("church/Nousiainen_Church_normal.jpg");
+    assimp_material.occlusion_texture = renderer->load_texture("church/Nousiainen_Church_occlusion.jpg");
     mesh_drawable = renderer->create_drawable();
     mesh_drawable->attach_mesh(assimp_mesh);
     mesh_drawable->attach_material(assimp_material);
     renderer->attach_drawable(mesh_drawable);
-    mesh_drawable->set_scale(3, 3, 3);
+    mesh_drawable->set_position(0, -10, 0);
+    mesh_drawable->set_scale(0.3, 0.3, 0.3);
+    camera->set_position(0, 5, -8);
+    camera->set_rotation(60, 0, 0);
 }
 
 void display() {

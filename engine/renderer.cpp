@@ -51,6 +51,7 @@ const char *fragment_shader =
         "uniform sampler2D diffuse_texture;\n"
         "uniform sampler2D normal_texture;\n"
         "uniform sampler2D roughness_texture;\n"
+        "uniform sampler2D occlusion_texture;\n"
         "void main(void)\n"
         "{\n"
         "   vec3 light_pos = vec3(0.0, 0.0, -10.0);\n"
@@ -64,7 +65,7 @@ const char *fragment_shader =
         "   float shininess = (pow((1.0 - roughness) * 1.5, 3.0) * shininess_factor);\n"
         "   float specular = pow(max(0.0, dot(view_dir, reflect_dir)), shininess) * (shininess / shininess_factor);\n"
         "   vec4 ambient = vec4(0.04, 0.08, 0.16, 1.0) * (1.0 - shade);\n"
-        "	color = ambient + shade * texture(diffuse_texture, t) + specular;\n"
+        "	color = ambient + shade * texture(diffuse_texture, t) * texture(occlusion_texture, t) + specular;\n"
 //        "   color = vec4(shininess) / shininess_factor;\n"
         "}\n";
 
@@ -124,6 +125,7 @@ renderer::renderer()
     m_program_context.diffuse_texture_uniform = glGetUniformLocation(m_program, "diffuse_texture");
     m_program_context.normal_texture_uniform = glGetUniformLocation(m_program, "normal_texture");
     m_program_context.roughness_texture_uniform = glGetUniformLocation(m_program, "roughness_texture");
+    m_program_context.occlusion_texture_uniform = glGetUniformLocation(m_program, "occlusion_texture");
 
     {
         texture_data data;
@@ -150,6 +152,15 @@ renderer::renderer()
         for (int i = 0; i < 32 * 32; ++i)
             data.rgba.push_back(rgba_data { 255, 255, 255, 255 });
         m_program_context.default_roughness_texture = create_texture(data);
+    }
+
+    {
+        texture_data data;
+        data.width = 32;
+        data.height = 32;
+        for (int i = 0; i < 32 * 32; ++i)
+            data.rgba.push_back(rgba_data { 255, 255, 255, 255 });
+        m_program_context.default_occlusion_texture = create_texture(data);
     }
 }
 

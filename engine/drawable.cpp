@@ -28,39 +28,39 @@ void drawable::render(const render_context &context)
 
     // diffuse
 
-    if (context.diffuse_texture_uniform != -1 && m_material.diffuse_texture != nullptr) {
-        glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0);
+    if (context.diffuse_texture_uniform != -1 && m_material.diffuse_texture != nullptr)
         m_material.diffuse_texture->bind();
-        glUniform1i(context.diffuse_texture_uniform, 0);
-    } else {
-        glActiveTexture(GL_TEXTURE0);
+    else
         context.default_diffuse_texture->bind();
-        glUniform1i(context.diffuse_texture_uniform, 0);
-    }
+    glUniform1i(context.diffuse_texture_uniform, 0);
 
     // normal
 
-    if (context.normal_texture_uniform != -1 && m_material.normal_texture != nullptr) {
-        glActiveTexture(GL_TEXTURE1);
+    glActiveTexture(GL_TEXTURE1);
+    if (context.normal_texture_uniform != -1 && m_material.normal_texture != nullptr)
         m_material.normal_texture->bind();
-        glUniform1i(context.normal_texture_uniform, 1);
-    } else {
-        glActiveTexture(GL_TEXTURE1);
+    else
         context.default_normal_texture->bind();
-        glUniform1i(context.normal_texture_uniform, 1);
-    }
+    glUniform1i(context.normal_texture_uniform, 1);
 
     // roughness
 
-    if (context.roughness_texture_uniform != -1 && m_material.roughness_texture != nullptr) {
-        glActiveTexture(GL_TEXTURE2);
+    glActiveTexture(GL_TEXTURE2);
+    if (context.roughness_texture_uniform != -1 && m_material.roughness_texture != nullptr)
         m_material.roughness_texture->bind();
-        glUniform1i(context.roughness_texture_uniform, 2);
-    } else {
-        glActiveTexture(GL_TEXTURE2);
+    else
         context.default_roughness_texture->bind();
-        glUniform1i(context.roughness_texture_uniform, 2);
-    }
+    glUniform1i(context.roughness_texture_uniform, 2);
+
+    // occlussion
+
+    glActiveTexture(GL_TEXTURE3);
+    if (context.occlusion_texture_uniform != -1 && m_material.occlusion_texture != nullptr)
+        m_material.occlusion_texture->bind();
+    else
+        context.default_occlusion_texture->bind();
+    glUniform1i(context.occlusion_texture_uniform, 3);
 
     m_mesh->render(context);
 }

@@ -22,9 +22,11 @@ struct render_context {
     GLint diffuse_texture_uniform;
     GLint normal_texture_uniform;
     GLint roughness_texture_uniform;
+    GLint occlusion_texture_uniform;
     std::shared_ptr<texture> default_diffuse_texture;
     std::shared_ptr<texture> default_normal_texture;
     std::shared_ptr<texture> default_roughness_texture;
+    std::shared_ptr<texture> default_occlusion_texture;
 };
 
 }
